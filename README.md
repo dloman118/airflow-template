@@ -11,6 +11,6 @@ The config.yaml file is where the DAG and DAG components are configured.
 ### DAG_COMPONENT_PARAMS
 
 
-## /SQL 
+## SQL/
 
 ## airflow.py
