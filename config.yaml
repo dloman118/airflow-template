@@ -1,0 +1,84 @@
+---
+  #Set global variables for the project
+  GLOBAL: 
+    dag_bucket: &global_dag_bucket #Storage bucket for Cloud Composer environment (optional: hard-coded in airflow.py)
+    dag_folder: &global_dag_bucket #Sub-folder within Cloud Composer environment for DAG (optional: hard-coded in airflow.py)
+    gcp_conn_id: &global_gcp_conn_id gcp_default #GCP default parameters. Configured in Airflow Admin -> Connections
+    project_id: &global_project_id #GCP project ID 
+
+    #BigQuery Variables
+    global_bq_conn_id: &global_bq_conn_id bigquery_default #Configured in Airflow Admin -> Connections
+
+    #Global Cloud Storage Variables
+    gcs_bucket: &global_gcs_bucket #GCS Bucket (only if DAG loads or extracts data from GCS)
+
+    #PostgreSQL Variables
+    pg_conn_id: &global_pg_conn_id pg_default #Postgres connection info (only if DAG loads data from PostGres DB). Configured in Airflow Admin -> Connections
+
+#----------------------------------------------------------------------------------------
+
+  #Default arguments for dag
+  DEFAULT_DAG_ARGS:
+    dag_id: #Required: ID for DAG
+    schedule_interval: '@once' #Enter as cron string (MIN HOUR DOM MON DOW), else defaults to run once
+    #DAG Default arguments
+    default_args:
+      project_id: *global_project_id
+      #Optional args
+      email_on_failure: False 
+      email_on_retry: False 
+
+#----------------------------------------------------------------------------------------
+
+  #Arguments for DAG components
+  DAG_PARAMS:
+
+    #Template for PostgresToGoogleCloudStorageOperator parameters
+    POSTGRES_TO_GCS:
+      task_id: postgres_to_gcs #Required: Task ID
+      bucket: *global_gcs_bucket #Bucket to store data on GCS from Postgres (global variable)
+      filename: directory/file_name.json #Filepath for data storage
+      sql: sql/path_to_sql_file.sql #Filepath to SQL (probably in sql/ folder)
+      postgres_conn_id: *global_pg_conn_id #Postgres connection ID (global variable)
+      gcp_conn_id: *global_gcp_conn_id #GCP connection ID (global variable)
+
+    #Template for GoogleCloudStorageToBigQueryOperator parameters
+    GCS_TO_BQ:
+      task_id: gcs_to_bq #Required: Task ID
+      bucket: *global_gcs_bucket
+      source_objects: [path_to_file1,path_to_file2] #List of files to load (if > 1, must have same metadata e.g. sharded tagles)
+      source_format: NEWLINE_DELIMITED_JSON #CSV, NEWLINE_DELIMITED_JSON, etc
+      destination_project_dataset_table: dataset.table #BigQuery destination dataset and table. Project is inferred from global project_id
+      gcp_conn_id: *global_gcp_conn_id #GCP connection ID (global variable)
+      write_disposition: WRITE_TRUNCATE #WRITE_TRUNCATE, WRITE_APPEND or WRITE_EMPTY 
+      #Define Metadata as list of dicts for each field
+        #name: name of field
+        #type: data type (STRING, INTEGER, FLOAT, DATE, BOOL, etc)
+        #mode: NULLABLE or REQUIRED
+      schema_fields: [
+        {"name": "field_name", "type": "data_type", "mode": "NULLABLE"},
+      ]
+      #Optional default parameters
+      create_disposition: CREATE_IF_NEEDED
+      skip_leading_rows: 1
+
+    #Template for BigQueryOperator parameters
+    BQ_TO_BQ:
+      task_id: bq_to_bq
+      sql: path_to_sql_file.sql
+      destination_dataset_table: 'dataset.table' #Project is inferred from global project_id
+      bigquery_conn_id: *global_bq_conn_id #BigQuery connection ID (global variable)
+      write_disposition:  WRITE_TRUNCATE #WRITE_TRUNCATE, WRITE_APPEND or WRITE_EMPTY 
+      #Define Metadata as list of dicts for each field
+        #name: name of field
+        #type: data type (STRING, INTEGER, FLOAT, DATE, BOOL, etc)
+        #mode: NULLABLE or REQUIRED
+      schema_fields: [
+        {"name": "field_name", "type": "data_type", "mode": "NULLABLE"},
+      ]
+
+      #Optional default parameters
+      create_disposition: CREATE_IF_NEEDED
+      use_legacy_sql: False
+
+  
