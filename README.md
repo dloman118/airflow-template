@@ -3,3 +3,14 @@ A template for streamlining airflow DAGs specific for Google Cloud Composer envi
 
 ## config.yaml
 The config.yaml file is where the DAG and DAG components are configured.
+
+### GLOBAL  
+
+### DAG_PARAMS
+
+### DAG_COMPONENT_PARAMS
+
+
+## /SQL 
+
+## airflow.py
