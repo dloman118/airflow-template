@@ -35,7 +35,7 @@
 
     #Template for PostgresToGoogleCloudStorageOperator parameters
     POSTGRES_TO_GCS:
-      task_id: postgres_to_gcs #Required: Task ID
+      task_id: #Required: Task ID
       bucket: *global_gcs_bucket #Bucket to store data on GCS from Postgres (global variable)
       filename: directory/file_name.json #Filepath for data storage
       sql: sql/path_to_sql_file.sql #Filepath to SQL (probably in sql/ folder)
@@ -44,7 +44,7 @@
 
     #Template for GoogleCloudStorageToBigQueryOperator parameters
     GCS_TO_BQ:
-      task_id: gcs_to_bq #Required: Task ID
+      task_id: #Required: Task ID
       bucket: *global_gcs_bucket
       source_objects: [path_to_file1,path_to_file2] #List of files to load (if > 1, must have same metadata e.g. sharded tagles)
       source_format: NEWLINE_DELIMITED_JSON #CSV, NEWLINE_DELIMITED_JSON, etc
@@ -64,8 +64,8 @@
 
     #Template for BigQueryOperator parameters
     BQ_TO_BQ:
-      task_id: bq_to_bq
-      sql: path_to_sql_file.sql
+      task_id:  #Required: Task ID
+      sql: sql/path_to_sql_file.sql #Filepath to SQL (probably in sql/ folder)
       destination_dataset_table: 'dataset.table' #Project is inferred from global project_id
       bigquery_conn_id: *global_bq_conn_id #BigQuery connection ID (global variable)
       write_disposition:  WRITE_TRUNCATE #WRITE_TRUNCATE, WRITE_APPEND or WRITE_EMPTY 
