@@ -40,6 +40,7 @@ for component in dag_component_params:
 #------------------------------------------------------------------------------
 
 
+#CONFIGURE DAG-----------------------------------------------------------------
 #An example DAG that loads data from an external PostgreSQL database to Cloud Storage,
 #then processes the data in BigQuery
 with DAG(**dag_params) as dag:
@@ -60,7 +61,7 @@ with DAG(**dag_params) as dag:
     )
     
 
-
+#CONFIGURE DAG DEPENDENCIES-----------------------------------------------------
 start >> postgres_to_gcs >> gcs_to_bigquery >> bigquery_to_bigquery >> end
 
 
