@@ -1,3 +1,4 @@
+#IMPORT PACKAGES---------------------------------------------------------------
 from airflow import DAG
 from airflow.contrib.operators.postgres_to_gcs_operator import PostgresToGoogleCloudStorageOperator
 from airflow.contrib.operators.bigquery_operator import BigQueryOperator
@@ -6,7 +7,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from google.cloud import storage
 from datetime import *
 import yaml
-
+#------------------------------------------------------------------------------
 
 ### FILL THESE OUT ###
 DAG_BUCKET_NAME = '' #Storage bucket for Cloud Composer environment
