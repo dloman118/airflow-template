@@ -18,7 +18,7 @@
 #----------------------------------------------------------------------------------------
 
   #Default arguments for dag
-  DEFAULT_DAG_ARGS:
+  DAG_PARAMS:
     dag_id: #Required: ID for DAG
     schedule_interval: '@once' #Enter as cron string (MIN HOUR DOM MON DOW), else defaults to run once
     #DAG Default arguments
@@ -31,7 +31,7 @@
 #----------------------------------------------------------------------------------------
 
   #Arguments for DAG components
-  DAG_PARAMS:
+  DAG_COMPONENT_PARAMS:
 
     #Template for PostgresToGoogleCloudStorageOperator parameters
     POSTGRES_TO_GCS:
